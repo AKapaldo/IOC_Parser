@@ -1,3 +1,15 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+This program is used for parsing IOC notices to run all time queries in Splunk.
+"""
+
+__author__ = "Andrew Kapaldo"
+__copyright__ = "Copyright 2022"
+__license__ = "GPL"
+__version__ = "1.0"
+__status__ = "Development"
+
 import re
 import tkinter as tk
 from tkinter.filedialog import askopenfilename
