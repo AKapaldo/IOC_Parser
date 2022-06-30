@@ -23,26 +23,44 @@ greeting.pack()
 
 
 filename = askopenfilename() # show an "Open" dialog box and return the path to the selected file
+flag = False
+start = "**************** INDICATORS OF COMPROMISE **********************"
+end = "****************************************************************"
 
-f = open(filename, 'r')
-content = f.read()
+with open(filename, encoding="utf8") as f:
+    file = f.read()
+
+content = re.search(re.escape(start) + "(.*)" + re.escape(end), file, re.DOTALL).group(1).strip()
+
+
 terms = {
     "net": [],
     "hashes": [],
-    "sites": []
+    "sites": [],
+    "docs": []
 } 
 query = ""
-start = "Earliest=1 Latest=+10y ("
-end = ")"
+qstart = "Earliest=1 Latest=+10y ("
+qend = ")"
+
+#Get Hashes
+hashes = re.findall(r'\S{64}', content)
 
 #Get URLs
-urls = re.findall('(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-&?=%.]+', content)
+urls = re.findall(r'(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-&?=%.]+', content)
 
 #Get IPs
 ips = re.findall(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', content)
 
+#Get Files
+files = re.findall(r'^(.*\.(?:doc|docx|docm|rtf|ppt|pptx|xls|xlsx|xlsm|xml|pdf|7z|zip|exe|msi|msp|iso|py|ps1|psm1|bat|cmd|sh|jar|js|vb))$', content, re.MULTILINE)
+
+
 #See if IP is in URL list
 site = [x for x in urls if x not in ips]
+
+#See if doc is in URL list
+documents = [x for x in files if x not in urls]
 
 #Add URLs to dictionary
 for each in site:
@@ -53,9 +71,21 @@ for ip in ips:
     search = "TERM(src_ip=" + ip + ") OR TERM(dest_ip=" + ip + ")"
     terms["net"].append(search)
 
+#Add hashes to dictionary
+for hash in hashes:
+    terms["hashes"].append(hash)
+
+for doc in documents:
+    terms["docs"].append(doc)
+
+
 if len(terms["net"]) > 0:
     for y in range(len(terms["net"])):
         query += terms["net"][y] + " OR "
+
+if len(terms["docs"]) > 0:
+    for y in range(len(terms["docs"])):
+        query += "\"" + terms["docs"][y] + "\"" + " OR "
 
 if len(terms["hashes"]) > 0:
     for y in range(len(terms["hashes"])):
@@ -65,11 +95,11 @@ if len(terms["sites"]) > 0:
     for y in range(len(terms["sites"])):
         query += terms["sites"][y] + " OR "
 
+
 query = query[:-4]
-final = start + query + end
+final = qstart + query + qend
 
 def copy_to_clipboard():
-    """Copy current contents of text_entry to clipboard."""
     window.clipboard_clear()  # Optional.
     window.clipboard_append(final.rstrip())
 
@@ -85,7 +115,5 @@ text_box.config(state='normal')
 
 clp = tk.Button(window, border=4 ,text="Copy To Clipboard", bg='LightBlue1',command=copy_to_clipboard)
 clp.place(x=20, y=500)
-
-#print(final)
 
 window.mainloop()
