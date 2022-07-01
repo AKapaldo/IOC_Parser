@@ -15,7 +15,6 @@ import re
 import tkinter as tk
 from tkinter import ttk
 from tkinter.filedialog import askopenfilename
-from turtle import bgcolor
 
 
 #Main Function
@@ -29,10 +28,10 @@ def main():
 
     #Variables for program
     global final
-    start = "**************** INDICATORS OF COMPROMISE **********************"
-    end = "****************************************************************"
+    start = "**************** INDICATORS OF COMPROMISE"
+    end = "********************"
     query = ""
-    qstart = "Earliest=1 Latest=+10y ("
+    qstart = "earliest=1 latest=+10y ("
     qend = ")"
     terms = {
         "net": [],
@@ -50,7 +49,9 @@ def main():
     content = re.search(re.escape(start) + "(.*)" + re.escape(end), file, re.DOTALL).group(1).strip()
 
     #Get Hashes
-    hashes = re.findall(r'\S{64}', content)
+    hashesSHA256 = re.findall(r'^[a-fA-F0-9]{64}$', content, re.MULTILINE)
+    hashesSHA1 = re.findall(r'^[a-fA-F0-9]{40}$', content, re.MULTILINE)
+    hashesMD5 = re.findall(r'^[a-fA-F0-9]{32}$', content, re.MULTILINE)
 
     #Get URLs
     urls = re.findall(r'^(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-&?=%.]+$', content, re.MULTILINE)
@@ -77,8 +78,12 @@ def main():
         terms["net"].append(search)
 
     #Add hashes to dictionary
-    for hash in hashes:
+    for hash in hashesSHA256:
         terms["hashes"].append(hash)
+    for hash2 in hashesSHA1:
+        terms["hashes"].append(hash2)
+    for hash3 in hashesMD5:
+        terms["hashes"].append(hash3)
 
     #Add files to dictionary
     for doc in files:
@@ -95,11 +100,11 @@ def main():
 
     if len(terms["hashes"]) > 0:
         for y in range(len(terms["hashes"])):
-            query += terms["hashes"][y] + " OR "
+            query += "\"" + terms["hashes"][y] + "\"" + " OR "
 
     if len(terms["sites"]) > 0:
         for y in range(len(terms["sites"])):
-            query += terms["sites"][y] + " OR "
+            query += "\"" + terms["sites"][y] + "\"" + " OR "
 
     #Remove the last " OR " and add the query start and end
     query = query[:-4]
