@@ -16,8 +16,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter.filedialog import askopenfilename
 from turtle import bgcolor
-global light
-light = False
+
 
 #Main Function
 def main():
@@ -157,5 +156,5 @@ button_quit = tk.Button(window, border=4 ,text="Exit", bg='#dddddd',command=lamb
 button_quit.place(x=200, y=550)
 
 
-#
+#Call the Main Loop
 window.mainloop()
