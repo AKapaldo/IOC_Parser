@@ -107,11 +107,11 @@ def main():
 
     #GUI Text box and contents
     text_box = tk.Text(
-        window,
+        results_frame,
         height=25,
         width=100
     )
-    text_box.place(x=20,y=100)
+    text_box.place(x=10,y=10)
     text_box.insert('end', final)
     text_box.config(state='normal')
 
