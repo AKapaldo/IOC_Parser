@@ -10,7 +10,6 @@ __license__ = "GPL"
 __version__ = "1.0"
 __status__ = "Development"
 
-from operator import eq
 import re
 import tkinter as tk
 from tkinter import ttk
@@ -46,7 +45,11 @@ def main():
         file = f.read()
 
     #Remove everything around the start and end variables
-    content = re.search(re.escape(start) + "(.*)" + re.escape(end), file, re.DOTALL).group(1).strip()
+    try:
+        content = re.search(re.escape(start) + "(.*)" + re.escape(end), file, re.DOTALL).group(1).strip()
+    except AttributeError:
+        start = "*******"
+        content = re.search(re.escape(start) + "(.*)", file, re.DOTALL).group(1).strip()
 
     #Get Hashes
     hashesSHA256 = re.findall(r'^[a-fA-F0-9]{64}$', content, re.MULTILINE)
