@@ -77,12 +77,6 @@ def main():
     #See if Docs in URL List
     site = [x for x in urls2 if x not in files]
 
-    #Remove any iJC3 emails
-    if 'DL-IM-JC3-Analytics@hq.doe.gov'in email:
-        email.remove("DL-IM-JC3-Analytics@hq.doe.gov")
-    if 'circ@jc3.doe.gov' in email:
-        email.remove("circ@jc3.doe.gov")
-
     #Add URLs to dictionary
     for each in site:
         terms["sites"].append(each)
