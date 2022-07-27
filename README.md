@@ -79,9 +79,9 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-
+<!----
 [![Print Fix Screen Shot][PrintFix-screenshot]](https://github.com/AKapaldo/IOC_Parser/blob/main/IOC_Parser.py)
-
+---->
 IOC Parser take input in the form of Indicator of Compromise notifications and creates Splunk and O365 queries.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
